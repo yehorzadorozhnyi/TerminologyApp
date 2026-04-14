@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace TerminologyApp
@@ -17,6 +16,27 @@ namespace TerminologyApp
         public Term Find(string name)
         {
             return Terms.FirstOrDefault(t => t.Name == name);
+        }
+
+        //Видалення
+        public void DeleteTerm(string name)
+        {
+            var term = Find(name);
+            if (term != null)
+            {
+                Terms.Remove(term);
+            }
+        }
+
+        //Редагування
+        public void UpdateTerm(string oldName, Term updatedTerm)
+        {
+            var index = Terms.FindIndex(t => t.Name == oldName);
+
+            if (index != -1)
+            {
+                Terms[index] = updatedTerm;
+            }
         }
     }
 }
