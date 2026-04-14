@@ -2,15 +2,8 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,12 +13,7 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             label1 = new Label();
@@ -38,99 +26,94 @@
             btnShowAll = new Button();
             btnShowChain = new Button();
             btnClear = new Button();
+            lstTerms = new ListBox();
+            txtOutput = new TextBox();
+
             SuspendLayout();
-            // 
+
             // label1
-            // 
             label1.AutoSize = true;
-            label1.Location = new Point(64, 38);
+            label1.Location = new Point(30, 20);
             label1.Name = "label1";
             label1.Size = new Size(45, 15);
-            label1.TabIndex = 0;
             label1.Text = "Термін";
-            // 
+
             // txtTerm
-            // 
-            txtTerm.Location = new Point(64, 87);
+            txtTerm.Location = new Point(30, 47);
             txtTerm.Name = "txtTerm";
-            txtTerm.Size = new Size(100, 23);
-            txtTerm.TabIndex = 1;
-            // 
+            txtTerm.Size = new Size(200, 23);
+
             // label2
-            // 
             label2.AutoSize = true;
-            label2.Location = new Point(64, 139);
+            label2.Location = new Point(30, 80);
             label2.Name = "label2";
             label2.Size = new Size(72, 15);
-            label2.TabIndex = 2;
             label2.Text = "Визначення";
-            // 
+
             // txtDefinition
-            // 
-            txtDefinition.Location = new Point(64, 182);
+            txtDefinition.Location = new Point(30, 105);
             txtDefinition.Multiline = true;
             txtDefinition.Name = "txtDefinition";
-            txtDefinition.Size = new Size(100, 23);
-            txtDefinition.TabIndex = 3;
-            // 
+            txtDefinition.Size = new Size(200, 60);
+
             // label3
-            // 
             label3.AutoSize = true;
-            label3.Location = new Point(64, 252);
+            label3.Location = new Point(30, 180);
             label3.Name = "label3";
-            label3.Size = new Size(142, 15);
-            label3.TabIndex = 4;
-            label3.Text = "Посилання (через кому)";
-            label3.Click += label3_Click;
-            // 
+            label3.Size = new Size(69, 15);
+            label3.Text = "Посилання";
+
             // txtReferences
-            // 
-            txtReferences.Location = new Point(64, 305);
+            txtReferences.Location = new Point(30, 205);
             txtReferences.Name = "txtReferences";
-            txtReferences.Size = new Size(100, 23);
-            txtReferences.TabIndex = 5;
-            // 
+            txtReferences.Size = new Size(200, 23);
+
             // btnAddTerm
-            // 
-            btnAddTerm.Location = new Point(331, 86);
+            btnAddTerm.Location = new Point(260, 45);
             btnAddTerm.Name = "btnAddTerm";
-            btnAddTerm.Size = new Size(96, 23);
-            btnAddTerm.TabIndex = 6;
+            btnAddTerm.Size = new Size(120, 25);
             btnAddTerm.Text = "Додати термін";
-            btnAddTerm.UseVisualStyleBackColor = true;
-            // 
+
             // btnShowAll
-            // 
-            btnShowAll.Location = new Point(331, 139);
+            btnShowAll.Location = new Point(260, 80);
             btnShowAll.Name = "btnShowAll";
-            btnShowAll.Size = new Size(87, 23);
-            btnShowAll.TabIndex = 7;
+            btnShowAll.Size = new Size(120, 25);
             btnShowAll.Text = "Показати всі";
-            btnShowAll.UseVisualStyleBackColor = true;
-            // 
+
             // btnShowChain
-            // 
-            btnShowChain.Location = new Point(331, 195);
+            btnShowChain.Location = new Point(260, 115);
             btnShowChain.Name = "btnShowChain";
-            btnShowChain.Size = new Size(111, 23);
-            btnShowChain.TabIndex = 8;
+            btnShowChain.Size = new Size(120, 25);
             btnShowChain.Text = "Показати ланцюг";
-            btnShowChain.UseVisualStyleBackColor = true;
-            // 
+
             // btnClear
-            // 
-            btnClear.Location = new Point(331, 244);
+            btnClear.Location = new Point(260, 150);
             btnClear.Name = "btnClear";
-            btnClear.Size = new Size(75, 23);
-            btnClear.TabIndex = 9;
+            btnClear.Size = new Size(120, 25);
             btnClear.Text = "Очистити";
-            btnClear.UseVisualStyleBackColor = true;
-            // 
+
+            // lstTerms
+            lstTerms.Location = new Point(400, 45);
+            lstTerms.Name = "lstTerms";
+            lstTerms.Size = new Size(200, 199);
+
+            // txtOutput
+            txtOutput.Location = new Point(30, 250);
+            txtOutput.Multiline = true;
+            txtOutput.Name = "txtOutput";
+            txtOutput.ScrollBars = ScrollBars.Vertical;
+            txtOutput.Size = new Size(570, 150);
+
             // Form1
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(650, 420);
+            Text = "Terminology App";
+            Name = "Form1";
+
+            // Controls
+            Controls.Add(txtOutput);
+            Controls.Add(lstTerms);
             Controls.Add(btnClear);
             Controls.Add(btnShowChain);
             Controls.Add(btnShowAll);
@@ -141,13 +124,16 @@
             Controls.Add(label2);
             Controls.Add(txtTerm);
             Controls.Add(label1);
-            Name = "Form1";
-            Text = "Form1";
+
+            //ПІДКЛЮЧЕННЯ ПОДІЙ
+            btnAddTerm.Click += btnAddTerm_Click;
+            btnShowAll.Click += btnShowAll_Click;
+            btnShowChain.Click += btnShowChain_Click;
+            btnClear.Click += btnClear_Click;
+
             ResumeLayout(false);
             PerformLayout();
         }
-
-        #endregion
 
         private Label label1;
         private TextBox txtTerm;
@@ -159,5 +145,7 @@
         private Button btnShowAll;
         private Button btnShowChain;
         private Button btnClear;
+        private ListBox lstTerms;
+        private TextBox txtOutput;
     }
 }
