@@ -8,11 +8,13 @@ namespace TerminologyApp
     {
         public List<Term> Terms = new List<Term>();
 
+        // Додавання
         public void AddTerm(Term term)
         {
             Terms.Add(term);
         }
 
+        // Пошук
         public Term Find(string name)
         {
             return Terms.FirstOrDefault(t => t.Name == name);

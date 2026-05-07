@@ -55,15 +55,7 @@ namespace TerminologyApp
         // ДОПОМІЖНІ МЕТОДИ
         // =========================
 
-        private List<string> GetReferences()
-        {
-            return txtReferences.Text
-                .Split(',')
-                .Select(r => r.Trim())
-                .Where(r => !string.IsNullOrWhiteSpace(r))
-                .ToList();
-        }
-
+        // Оновлення списку термінів
         private void RefreshTermsList()
         {
             lstTerms.Items.Clear();
@@ -78,19 +70,21 @@ namespace TerminologyApp
         // ОСНОВНІ ДІЇ
         // =========================
 
+        // Додавання терміна
         private void btnAddTerm_Click(object sender, EventArgs e)
         {
-            var term = new Term(
-                txtTerm.Text,
-                txtDefinition.Text,
-                GetReferences()
-            );
+            AddTermForm form = new AddTermForm();
 
-            db.AddTerm(term);
-            lstTerms.Items.Add(term.Name);
-            SaveData();
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                db.AddTerm(form.NewTerm);
+
+                RefreshTermsList();
+
+                SaveData();
+            }
         }
-
+        // Виведення всіх термінів
         private void btnShowAll_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
@@ -109,10 +103,14 @@ namespace TerminologyApp
             }
         }
 
+        // Виведення ланцюга посилань для вибраного терміна
         private void btnShowChain_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
-            ShowChain(txtTerm.Text);
+            if (lstTerms.SelectedItem is not string selectedName)
+                return;
+            txtOutput.Clear();
+            ShowChain(selectedName);
         }
 
         private void ShowChain(string name)
@@ -128,38 +126,47 @@ namespace TerminologyApp
             }
         }
 
+        // Очистка полів
         private void btnClear_Click(object sender, EventArgs e)
         {
-            txtTerm.Clear();
-            txtDefinition.Clear();
-            txtReferences.Clear();
             txtOutput.Clear();
         }
 
+        // Видалення терміна
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            string name = txtTerm.Text;
+            if (lstTerms.SelectedItem is not string name)
+                return;
 
             db.DeleteTerm(name);
             lstTerms.Items.Remove(name);
             SaveData();
         }
 
+        // Редагуання терміна
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            string name = txtTerm.Text;
+            if (lstTerms.SelectedItem is not string oldName)
+                return;
 
-            var updated = new Term(
-                txtTerm.Text,
-                txtDefinition.Text,
-                GetReferences()
-            );
+            var term = db.Find(oldName);
 
-            db.UpdateTerm(name, updated);
-            RefreshTermsList();
-            SaveData();
+            if (term == null)
+                return;
+
+            AddTermForm form = new AddTermForm(term);
+
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                db.UpdateTerm(oldName, form.NewTerm);
+
+                RefreshTermsList();
+
+                SaveData();
+            }
         }
 
+        // Виведення інформації про вибраний термін
         private void lstTerms_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstTerms.SelectedItem is not string selectedName)
@@ -168,9 +175,14 @@ namespace TerminologyApp
             var term = db.Find(selectedName);
             if (term == null) return;
 
-            txtTerm.Text = term.Name;
-            txtDefinition.Text = term.Definition;
-            txtReferences.Text = string.Join(", ", term.References);
+            txtOutput.Clear();
+            txtOutput.AppendText($"Термін: {term.Name}\n\n");
+            txtOutput.AppendText($"Визначення: {term.Definition}\n\n");
+            txtOutput.AppendText("Посилання:\n");
+            foreach (var r in term.References)
+            {
+                txtOutput.AppendText($"http://term/{r}\n");
+            }
         }
 
         // =========================
@@ -185,12 +197,30 @@ namespace TerminologyApp
             string termName = e.LinkText.Replace("http://term/", "");
 
             var term = db.Find(termName);
-            if (term == null) return;
 
-            txtTerm.Text = term.Name;
-            txtDefinition.Text = term.Definition;
-            txtReferences.Text = string.Join(", ", term.References);
+            if (term == null)
+                return;
+
+            lstTerms.SelectedItem = term.Name;
         }
 
+        // =========================
+        // ПОШУК
+        // =========================
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            string search = txtSearch.Text.ToLower();
+
+            lstTerms.Items.Clear();
+
+            var filtered = db.Terms
+                .Where(t => t.Name.ToLower().Contains(search))
+                .ToList();
+
+            foreach (var term in filtered)
+            {
+                lstTerms.Items.Add(term.Name);
+            }
+        }
     }
 }

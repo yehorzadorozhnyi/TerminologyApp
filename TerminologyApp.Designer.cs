@@ -4,15 +4,6 @@
     {
         private System.ComponentModel.IContainer components = null;
 
-        private Label label1;
-        private TextBox txtTerm;
-
-        private Label label2;
-        private TextBox txtDefinition;
-
-        private Label label3;
-        private TextBox txtReferences;
-
         private Button btnAddTerm;
         private Button btnShowAll;
         private Button btnShowChain;
@@ -26,12 +17,7 @@
 
         private void InitializeComponent()
         {
-            label1 = new Label();
-            txtTerm = new TextBox();
-            label2 = new Label();
-            txtDefinition = new TextBox();
-            label3 = new Label();
-            txtReferences = new TextBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TerminologyApp));
             btnAddTerm = new Button();
             btnShowAll = new Button();
             btnShowChain = new Button();
@@ -40,136 +26,145 @@
             btnEdit = new Button();
             lstTerms = new ListBox();
             txtOutput = new RichTextBox();
+            txtSearch = new TextBox();
+            pictureBox1 = new PictureBox();
+            label1 = new Label();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.Location = new Point(30, 20);
-            label1.Name = "label1";
-            label1.Size = new Size(100, 23);
-            label1.TabIndex = 1;
-            label1.Text = "Термін";
-            // 
-            // txtTerm
-            // 
-            txtTerm.Location = new Point(30, 45);
-            txtTerm.Name = "txtTerm";
-            txtTerm.Size = new Size(180, 31);
-            txtTerm.TabIndex = 2;
-            // 
-            // label2
-            // 
-            label2.Location = new Point(30, 80);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 23);
-            label2.TabIndex = 3;
-            label2.Text = "Визначення";
-            // 
-            // txtDefinition
-            // 
-            txtDefinition.Location = new Point(30, 105);
-            txtDefinition.Multiline = true;
-            txtDefinition.Name = "txtDefinition";
-            txtDefinition.Size = new Size(180, 50);
-            txtDefinition.TabIndex = 4;
-            // 
-            // label3
-            // 
-            label3.Location = new Point(30, 180);
-            label3.Name = "label3";
-            label3.Size = new Size(100, 23);
-            label3.TabIndex = 5;
-            label3.Text = "Посилання";
-            // 
-            // txtReferences
-            // 
-            txtReferences.Location = new Point(30, 205);
-            txtReferences.Name = "txtReferences";
-            txtReferences.Size = new Size(180, 31);
-            txtReferences.TabIndex = 6;
             // 
             // btnAddTerm
             // 
-            btnAddTerm.Location = new Point(260, 45);
+            btnAddTerm.BackColor = Color.RoyalBlue;
+            btnAddTerm.ForeColor = SystemColors.Control;
+            btnAddTerm.Location = new Point(196, 112);
             btnAddTerm.Name = "btnAddTerm";
             btnAddTerm.Size = new Size(90, 30);
             btnAddTerm.TabIndex = 7;
             btnAddTerm.Text = "Додати";
+            btnAddTerm.UseVisualStyleBackColor = false;
             btnAddTerm.Click += btnAddTerm_Click;
             // 
             // btnShowAll
             // 
-            btnShowAll.Location = new Point(260, 80);
+            btnShowAll.BackColor = Color.RoyalBlue;
+            btnShowAll.ForeColor = SystemColors.Control;
+            btnShowAll.Location = new Point(622, 112);
             btnShowAll.Name = "btnShowAll";
             btnShowAll.Size = new Size(90, 30);
             btnShowAll.TabIndex = 8;
             btnShowAll.Text = "Показати";
+            btnShowAll.UseVisualStyleBackColor = false;
             btnShowAll.Click += btnShowAll_Click;
             // 
             // btnShowChain
             // 
-            btnShowChain.Location = new Point(260, 115);
+            btnShowChain.BackColor = Color.RoyalBlue;
+            btnShowChain.ForeColor = SystemColors.Control;
+            btnShowChain.Location = new Point(718, 112);
             btnShowChain.Name = "btnShowChain";
             btnShowChain.Size = new Size(90, 30);
             btnShowChain.TabIndex = 9;
             btnShowChain.Text = "Ланцюг";
+            btnShowChain.UseVisualStyleBackColor = false;
             btnShowChain.Click += btnShowChain_Click;
             // 
             // btnClear
             // 
-            btnClear.Location = new Point(260, 150);
+            btnClear.BackColor = Color.RoyalBlue;
+            btnClear.ForeColor = SystemColors.Control;
+            btnClear.Location = new Point(814, 114);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(90, 30);
             btnClear.TabIndex = 10;
             btnClear.Text = "Очистити";
+            btnClear.UseVisualStyleBackColor = false;
             btnClear.Click += btnClear_Click;
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(260, 185);
+            btnDelete.BackColor = Color.RoyalBlue;
+            btnDelete.ForeColor = SystemColors.Control;
+            btnDelete.Location = new Point(388, 112);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(90, 30);
             btnDelete.TabIndex = 11;
             btnDelete.Text = "Видалити";
+            btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += btnDelete_Click;
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(260, 220);
+            btnEdit.BackColor = Color.RoyalBlue;
+            btnEdit.ForeColor = SystemColors.Control;
+            btnEdit.Location = new Point(292, 112);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(90, 30);
             btnEdit.TabIndex = 12;
             btnEdit.Text = "Редагувати";
+            btnEdit.UseVisualStyleBackColor = false;
             btnEdit.Click += btnEdit_Click;
             // 
             // lstTerms
             // 
-            lstTerms.Location = new Point(400, 45);
+            lstTerms.Dock = DockStyle.Left;
+            lstTerms.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            lstTerms.ForeColor = Color.RoyalBlue;
+            lstTerms.Location = new Point(0, 150);
+            lstTerms.Margin = new Padding(5, 5, 5, 15);
             lstTerms.Name = "lstTerms";
-            lstTerms.Size = new Size(150, 129);
+            lstTerms.Size = new Size(160, 529);
             lstTerms.TabIndex = 13;
             lstTerms.SelectedIndexChanged += lstTerms_SelectedIndexChanged;
             // 
             // txtOutput
             // 
-            txtOutput.Location = new Point(30, 252);
+            txtOutput.Dock = DockStyle.Fill;
+            txtOutput.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            txtOutput.Location = new Point(160, 150);
             txtOutput.Name = "txtOutput";
             txtOutput.ReadOnly = true;
-            txtOutput.Size = new Size(563, 144);
+            txtOutput.Size = new Size(839, 529);
             txtOutput.TabIndex = 0;
             txtOutput.Text = "";
             txtOutput.LinkClicked += txtOutput_LinkClicked;
             // 
+            // txtSearch
+            // 
+            txtSearch.Location = new Point(0, 119);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(160, 23);
+            txtSearch.TabIndex = 14;
+            txtSearch.Text = "Пошук терміну";
+            txtSearch.TextChanged += txtSearch_TextChanged;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.Location = new Point(23, 2);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(107, 111);
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 15;
+            pictureBox1.TabStop = false;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Trebuchet MS", 20.25F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 204);
+            label1.ForeColor = Color.RoyalBlue;
+            label1.Location = new Point(196, 29);
+            label1.Name = "label1";
+            label1.Size = new Size(198, 35);
+            label1.TabIndex = 16;
+            label1.Text = "База Термінів";
+            // 
             // TerminologyApp
             // 
-            ClientSize = new Size(650, 420);
-            Controls.Add(txtOutput);
+            ClientSize = new Size(999, 679);
             Controls.Add(label1);
-            Controls.Add(txtTerm);
-            Controls.Add(label2);
-            Controls.Add(txtDefinition);
-            Controls.Add(label3);
-            Controls.Add(txtReferences);
+            Controls.Add(pictureBox1);
+            Controls.Add(txtSearch);
+            Controls.Add(txtOutput);
             Controls.Add(btnAddTerm);
             Controls.Add(btnShowAll);
             Controls.Add(btnShowChain);
@@ -177,10 +172,17 @@
             Controls.Add(btnDelete);
             Controls.Add(btnEdit);
             Controls.Add(lstTerms);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "TerminologyApp";
-            Text = "Terminology App";
+            Padding = new Padding(0, 150, 0, 0);
+            Text = "База Термінів";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
+
+        private TextBox txtSearch;
+        private PictureBox pictureBox1;
+        private Label label1;
     }
 }

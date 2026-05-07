@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TerminologyApp
 {
-    internal class Term
+    public class Term
     {
         public string Name { get; set; }
         public string Definition { get; set; }
