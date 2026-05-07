@@ -1,20 +1,59 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
+using System.Text.Json;
 
 namespace TerminologyApp
 {
     public partial class TerminologyApp : Form
     {
-        TerminologyBase db = new TerminologyBase();
+        private readonly TerminologyBase db = new TerminologyBase();
+        private string filePath = "terms.json";
 
         public TerminologyApp()
         {
             InitializeComponent();
+            LoadData();
+            RefreshTermsList();
+        }
+        // =========================
+        // JSON Р—Р‘Р•Р Р†Р“РђРќРќРЇ
+        // =========================
+
+        private void SaveData()
+        {
+            var json = JsonSerializer.Serialize(db.Terms, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            File.WriteAllText(filePath, json);
         }
 
-        // Допоміжні методи
+        private void LoadData()
+        {
+            if (!File.Exists(filePath))
+                return;
+
+            var json = File.ReadAllText(filePath);
+
+            var data = JsonSerializer.Deserialize<List<Term>>(json);
+
+            if (data != null)
+                db.Terms = data;
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            SaveData();
+            base.OnFormClosing(e);
+        }
+
+        // =========================
+        // Р”РћРџРћРњР†Р–РќР† РњР•РўРћР”Р
+        // =========================
 
         private List<string> GetReferences()
         {
@@ -35,9 +74,10 @@ namespace TerminologyApp
             }
         }
 
-        // Основні події
+        // =========================
+        // РћРЎРќРћР’РќР† Р”Р†Р‡
+        // =========================
 
-        // Додавання нового терміну
         private void btnAddTerm_Click(object sender, EventArgs e)
         {
             var term = new Term(
@@ -48,27 +88,33 @@ namespace TerminologyApp
 
             db.AddTerm(term);
             lstTerms.Items.Add(term.Name);
+            SaveData();
         }
 
-        // Виведення списку всіх термінів
         private void btnShowAll_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
 
             foreach (var t in db.Terms)
             {
-                txtOutput.AppendText($"{t.Name} - {t.Definition}\r\n");
+                txtOutput.AppendText(t.Name + " - " + t.Definition + "\n");
+                txtOutput.AppendText("РџРѕСЃРёР»Р°РЅРЅСЏ РЅР° С‚РµСЂРјС–РЅ: ");
+
+                foreach (var r in t.References)
+                {
+                    txtOutput.AppendText($"http://term/{r} ");
+                }
+
+                txtOutput.AppendText("\n\n");
             }
         }
 
-        // Відображення ланцюжка термінів
         private void btnShowChain_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
             ShowChain(txtTerm.Text);
         }
 
-        // Рекурсивне виведення ланцюжка
         private void ShowChain(string name)
         {
             var term = db.Find(name);
@@ -82,7 +128,6 @@ namespace TerminologyApp
             }
         }
 
-        // Очищення полів
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtTerm.Clear();
@@ -91,16 +136,15 @@ namespace TerminologyApp
             txtOutput.Clear();
         }
 
-        // Видалення терміну
         private void btnDelete_Click(object sender, EventArgs e)
         {
             string name = txtTerm.Text;
 
             db.DeleteTerm(name);
             lstTerms.Items.Remove(name);
+            SaveData();
         }
 
-        // Редагування терміну
         private void btnEdit_Click(object sender, EventArgs e)
         {
             string name = txtTerm.Text;
@@ -113,9 +157,9 @@ namespace TerminologyApp
 
             db.UpdateTerm(name, updated);
             RefreshTermsList();
+            SaveData();
         }
 
-        // Автозаповнення при виборі
         private void lstTerms_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstTerms.SelectedItem is not string selectedName)
@@ -128,5 +172,25 @@ namespace TerminologyApp
             txtDefinition.Text = term.Definition;
             txtReferences.Text = string.Join(", ", term.References);
         }
+
+        // =========================
+        // Р“Р†РџР•Р РџРћРЎРР›РђРќРќРЇ
+        // =========================
+
+        private void txtOutput_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(e.LinkText))
+                return;
+
+            string termName = e.LinkText.Replace("http://term/", "");
+
+            var term = db.Find(termName);
+            if (term == null) return;
+
+            txtTerm.Text = term.Name;
+            txtDefinition.Text = term.Definition;
+            txtReferences.Text = string.Join(", ", term.References);
+        }
+
     }
 }

@@ -22,7 +22,7 @@
 
         private ListBox lstTerms;
 
-        private TextBox txtOutput;
+        private RichTextBox txtOutput;
 
         private void InitializeComponent()
         {
@@ -39,7 +39,7 @@
             btnDelete = new Button();
             btnEdit = new Button();
             lstTerms = new ListBox();
-            txtOutput = new TextBox();
+            txtOutput = new RichTextBox();
             SuspendLayout();
             // 
             // label1
@@ -47,22 +47,22 @@
             label1.Location = new Point(30, 20);
             label1.Name = "label1";
             label1.Size = new Size(100, 23);
-            label1.TabIndex = 0;
+            label1.TabIndex = 1;
             label1.Text = "Термін";
             // 
             // txtTerm
             // 
             txtTerm.Location = new Point(30, 45);
             txtTerm.Name = "txtTerm";
-            txtTerm.Size = new Size(180, 23);
-            txtTerm.TabIndex = 1;
+            txtTerm.Size = new Size(180, 31);
+            txtTerm.TabIndex = 2;
             // 
             // label2
             // 
             label2.Location = new Point(30, 80);
             label2.Name = "label2";
             label2.Size = new Size(100, 23);
-            label2.TabIndex = 2;
+            label2.TabIndex = 3;
             label2.Text = "Визначення";
             // 
             // txtDefinition
@@ -71,29 +71,29 @@
             txtDefinition.Multiline = true;
             txtDefinition.Name = "txtDefinition";
             txtDefinition.Size = new Size(180, 50);
-            txtDefinition.TabIndex = 3;
+            txtDefinition.TabIndex = 4;
             // 
             // label3
             // 
             label3.Location = new Point(30, 180);
             label3.Name = "label3";
             label3.Size = new Size(100, 23);
-            label3.TabIndex = 4;
+            label3.TabIndex = 5;
             label3.Text = "Посилання";
             // 
             // txtReferences
             // 
             txtReferences.Location = new Point(30, 205);
             txtReferences.Name = "txtReferences";
-            txtReferences.Size = new Size(180, 23);
-            txtReferences.TabIndex = 5;
+            txtReferences.Size = new Size(180, 31);
+            txtReferences.TabIndex = 6;
             // 
             // btnAddTerm
             // 
             btnAddTerm.Location = new Point(260, 45);
             btnAddTerm.Name = "btnAddTerm";
             btnAddTerm.Size = new Size(90, 30);
-            btnAddTerm.TabIndex = 6;
+            btnAddTerm.TabIndex = 7;
             btnAddTerm.Text = "Додати";
             btnAddTerm.Click += btnAddTerm_Click;
             // 
@@ -102,7 +102,7 @@
             btnShowAll.Location = new Point(260, 80);
             btnShowAll.Name = "btnShowAll";
             btnShowAll.Size = new Size(90, 30);
-            btnShowAll.TabIndex = 7;
+            btnShowAll.TabIndex = 8;
             btnShowAll.Text = "Показати";
             btnShowAll.Click += btnShowAll_Click;
             // 
@@ -111,7 +111,7 @@
             btnShowChain.Location = new Point(260, 115);
             btnShowChain.Name = "btnShowChain";
             btnShowChain.Size = new Size(90, 30);
-            btnShowChain.TabIndex = 8;
+            btnShowChain.TabIndex = 9;
             btnShowChain.Text = "Ланцюг";
             btnShowChain.Click += btnShowChain_Click;
             // 
@@ -120,7 +120,7 @@
             btnClear.Location = new Point(260, 150);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(90, 30);
-            btnClear.TabIndex = 9;
+            btnClear.TabIndex = 10;
             btnClear.Text = "Очистити";
             btnClear.Click += btnClear_Click;
             // 
@@ -129,7 +129,7 @@
             btnDelete.Location = new Point(260, 185);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(90, 30);
-            btnDelete.TabIndex = 10;
+            btnDelete.TabIndex = 11;
             btnDelete.Text = "Видалити";
             btnDelete.Click += btnDelete_Click;
             // 
@@ -138,7 +138,7 @@
             btnEdit.Location = new Point(260, 220);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(90, 30);
-            btnEdit.TabIndex = 11;
+            btnEdit.TabIndex = 12;
             btnEdit.Text = "Редагувати";
             btnEdit.Click += btnEdit_Click;
             // 
@@ -146,23 +146,24 @@
             // 
             lstTerms.Location = new Point(400, 45);
             lstTerms.Name = "lstTerms";
-            lstTerms.Size = new Size(150, 139);
-            lstTerms.TabIndex = 12;
+            lstTerms.Size = new Size(150, 129);
+            lstTerms.TabIndex = 13;
             lstTerms.SelectedIndexChanged += lstTerms_SelectedIndexChanged;
             // 
             // txtOutput
             // 
-            txtOutput.Location = new Point(30, 270);
-            txtOutput.Multiline = true;
+            txtOutput.Location = new Point(30, 252);
             txtOutput.Name = "txtOutput";
             txtOutput.ReadOnly = true;
-            txtOutput.ScrollBars = ScrollBars.Vertical;
-            txtOutput.Size = new Size(520, 100);
-            txtOutput.TabIndex = 13;
+            txtOutput.Size = new Size(563, 144);
+            txtOutput.TabIndex = 0;
+            txtOutput.Text = "";
+            txtOutput.LinkClicked += txtOutput_LinkClicked;
             // 
             // TerminologyApp
             // 
             ClientSize = new Size(650, 420);
+            Controls.Add(txtOutput);
             Controls.Add(label1);
             Controls.Add(txtTerm);
             Controls.Add(label2);
@@ -176,7 +177,6 @@
             Controls.Add(btnDelete);
             Controls.Add(btnEdit);
             Controls.Add(lstTerms);
-            Controls.Add(txtOutput);
             Name = "TerminologyApp";
             Text = "Terminology App";
             ResumeLayout(false);
