@@ -22,6 +22,7 @@ namespace TerminologyApp
         // JSON ЗБЕРІГАННЯ
         // =========================
 
+        // Збереження даних у JSON файл
         private void SaveData()
         {
             var json = JsonSerializer.Serialize(db.Terms, new JsonSerializerOptions
@@ -32,6 +33,7 @@ namespace TerminologyApp
             File.WriteAllText(filePath, json);
         }
 
+        // Завантаження даних з JSON файлу
         private void LoadData()
         {
             if (!File.Exists(filePath))
@@ -45,6 +47,7 @@ namespace TerminologyApp
                 db.Terms = data;
         }
 
+        // Збереження даних при закритті форми
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             SaveData();
@@ -113,6 +116,7 @@ namespace TerminologyApp
             ShowChain(selectedName);
         }
 
+        // Рекурсивний метод для виведення ланцюга посилань
         private void ShowChain(string name)
         {
             var term = db.Find(name);
@@ -189,6 +193,7 @@ namespace TerminologyApp
         // ГІПЕРПОСИЛАННЯ
         // =========================
 
+        // Обробка кліку по посиланню в текстовому полі
         private void txtOutput_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(e.LinkText))
@@ -207,6 +212,7 @@ namespace TerminologyApp
         // =========================
         // ПОШУК
         // =========================
+        // Фільтрація термінів за введеним текстом
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             string search = txtSearch.Text.ToLower();

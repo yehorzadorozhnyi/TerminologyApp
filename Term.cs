@@ -4,6 +4,7 @@ using System.Text;
 
 namespace TerminologyApp
 {
+    // Клас для зберігання інформації про термін
     public class Term
     {
         public string Name { get; set; }
