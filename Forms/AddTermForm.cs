@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using TerminologyApp.Models;
 
 namespace TerminologyApp
 {
@@ -25,6 +26,7 @@ namespace TerminologyApp
             InitializeComponent();
 
             txtTerm.Text = term.Name;
+            cmbCategory.Text = term.Category;
             txtDefinition.Text = term.Definition;
             txtReferences.Text = string.Join(", ", term.References);
         }
@@ -67,12 +69,24 @@ namespace TerminologyApp
             NewTerm = new Term(
                 txtTerm.Text,
                 txtDefinition.Text,
-                refs
+                refs,
+                cmbCategory.Text
             );
 
             DialogResult = DialogResult.OK;
             Close();
         }
+
+        public void LoadCategories(List<Category> categories)
+        {
+            cmbCategory.Items.Clear();
+
+            foreach (var c in categories)
+            {
+                cmbCategory.Items.Add(c.Name);
+            }
+        }
+
 
         private void label1_Click(object sender, EventArgs e)
         {

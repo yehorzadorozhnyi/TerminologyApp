@@ -37,6 +37,7 @@
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
+            cmbCategory = new ComboBox();
             SuspendLayout();
             // 
             // txtTerm
@@ -46,7 +47,7 @@
             txtTerm.Margin = new Padding(3, 0, 0, 10);
             txtTerm.Multiline = true;
             txtTerm.Name = "txtTerm";
-            txtTerm.Size = new Size(660, 100);
+            txtTerm.Size = new Size(553, 100);
             txtTerm.TabIndex = 0;
             // 
             // txtDefinition
@@ -55,7 +56,7 @@
             txtDefinition.Location = new Point(120, 140);
             txtDefinition.Multiline = true;
             txtDefinition.Name = "txtDefinition";
-            txtDefinition.Size = new Size(660, 100);
+            txtDefinition.Size = new Size(553, 100);
             txtDefinition.TabIndex = 1;
             // 
             // txtReferences
@@ -64,7 +65,7 @@
             txtReferences.Location = new Point(120, 240);
             txtReferences.Multiline = true;
             txtReferences.Name = "txtReferences";
-            txtReferences.Size = new Size(660, 100);
+            txtReferences.Size = new Size(553, 100);
             txtReferences.TabIndex = 2;
             // 
             // btnSave
@@ -75,7 +76,7 @@
             btnSave.ForeColor = SystemColors.Control;
             btnSave.Location = new Point(120, 340);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(660, 90);
+            btnSave.Size = new Size(553, 90);
             btnSave.TabIndex = 3;
             btnSave.Text = "Зберегти";
             btnSave.UseVisualStyleBackColor = false;
@@ -115,17 +116,26 @@
             label4.AutoSize = true;
             label4.Font = new Font("Trebuchet MS", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label4.ForeColor = Color.RoyalBlue;
-            label4.Location = new Point(349, 12);
+            label4.Location = new Point(295, 12);
             label4.Name = "label4";
             label4.Size = new Size(198, 24);
             label4.TabIndex = 7;
             label4.Text = "ДОДАВАННЯ ТЕРМІНУ";
             // 
+            // cmbCategory
+            // 
+            cmbCategory.FormattingEnabled = true;
+            cmbCategory.Location = new Point(694, 43);
+            cmbCategory.Name = "cmbCategory";
+            cmbCategory.Size = new Size(121, 23);
+            cmbCategory.TabIndex = 8;
+            // 
             // AddTermForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(833, 450);
+            Controls.Add(cmbCategory);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -136,7 +146,7 @@
             Controls.Add(txtTerm);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "AddTermForm";
-            Padding = new Padding(120, 40, 20, 20);
+            Padding = new Padding(120, 40, 160, 20);
             Text = "Додавання Терміну";
             ResumeLayout(false);
             PerformLayout();
@@ -152,5 +162,6 @@
         private Label label2;
         private Label label3;
         private Label label4;
+        private ComboBox cmbCategory;
     }
 }

@@ -29,6 +29,7 @@
             txtSearch = new TextBox();
             pictureBox1 = new PictureBox();
             label1 = new Label();
+            btnShowCategories = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -158,9 +159,22 @@
             label1.TabIndex = 16;
             label1.Text = "База Термінів";
             // 
+            // btnShowCategories
+            // 
+            btnShowCategories.BackColor = Color.RoyalBlue;
+            btnShowCategories.ForeColor = SystemColors.Control;
+            btnShowCategories.Location = new Point(622, 83);
+            btnShowCategories.Name = "btnShowCategories";
+            btnShowCategories.Size = new Size(282, 23);
+            btnShowCategories.TabIndex = 17;
+            btnShowCategories.Text = "Показати категорії";
+            btnShowCategories.UseVisualStyleBackColor = false;
+            btnShowCategories.Click += btnShowCategories_Click;
+            // 
             // TerminologyApp
             // 
             ClientSize = new Size(999, 679);
+            Controls.Add(btnShowCategories);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
             Controls.Add(txtSearch);
@@ -184,5 +198,6 @@
         private TextBox txtSearch;
         private PictureBox pictureBox1;
         private Label label1;
+        private Button btnShowCategories;
     }
 }
