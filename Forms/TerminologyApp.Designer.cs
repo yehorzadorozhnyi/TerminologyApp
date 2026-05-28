@@ -47,6 +47,7 @@
             // 
             // btnShowAll
             // 
+            btnShowAll.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnShowAll.BackColor = Color.RoyalBlue;
             btnShowAll.ForeColor = SystemColors.Control;
             btnShowAll.Location = new Point(622, 112);
@@ -59,6 +60,7 @@
             // 
             // btnShowChain
             // 
+            btnShowChain.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnShowChain.BackColor = Color.RoyalBlue;
             btnShowChain.ForeColor = SystemColors.Control;
             btnShowChain.Location = new Point(718, 112);
@@ -71,6 +73,7 @@
             // 
             // btnClear
             // 
+            btnClear.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnClear.BackColor = Color.RoyalBlue;
             btnClear.ForeColor = SystemColors.Control;
             btnClear.Location = new Point(814, 114);
@@ -113,7 +116,7 @@
             lstTerms.Location = new Point(0, 150);
             lstTerms.Margin = new Padding(5, 5, 5, 15);
             lstTerms.Name = "lstTerms";
-            lstTerms.Size = new Size(160, 529);
+            lstTerms.Size = new Size(286, 529);
             lstTerms.TabIndex = 13;
             lstTerms.SelectedIndexChanged += lstTerms_SelectedIndexChanged;
             // 
@@ -121,10 +124,10 @@
             // 
             txtOutput.Dock = DockStyle.Fill;
             txtOutput.Font = new Font("Segoe UI", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            txtOutput.Location = new Point(160, 150);
+            txtOutput.Location = new Point(286, 150);
             txtOutput.Name = "txtOutput";
             txtOutput.ReadOnly = true;
-            txtOutput.Size = new Size(839, 529);
+            txtOutput.Size = new Size(713, 529);
             txtOutput.TabIndex = 0;
             txtOutput.Text = "";
             txtOutput.LinkClicked += txtOutput_LinkClicked;
@@ -137,6 +140,8 @@
             txtSearch.TabIndex = 14;
             txtSearch.Text = "Пошук терміну";
             txtSearch.TextChanged += txtSearch_TextChanged;
+            txtSearch.Enter += txtSearch_Enter;
+            txtSearch.Leave += txtSearch_Leave;
             // 
             // pictureBox1
             // 
@@ -161,6 +166,7 @@
             // 
             // btnShowCategories
             // 
+            btnShowCategories.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnShowCategories.BackColor = Color.RoyalBlue;
             btnShowCategories.ForeColor = SystemColors.Control;
             btnShowCategories.Location = new Point(622, 83);

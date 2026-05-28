@@ -7,34 +7,36 @@ namespace TerminologyApp.Data
 {
     public class JsonStorage
     {
-        private readonly string filePath;
+        private readonly string termsFilePath = "terms.json";
+        private readonly string categoriesFilePath = "categories.json";
 
-        public JsonStorage(string filePath)
+        public void SaveAll(List<Term> terms, List<Category> categories)
         {
-            this.filePath = filePath;
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            var termsJson = JsonSerializer.Serialize(terms, options);
+            File.WriteAllText(termsFilePath, termsJson);
+
+            var categoriesJson = JsonSerializer.Serialize(categories, options);
+            File.WriteAllText(categoriesFilePath, categoriesJson);
         }
 
-        // Збереження
-        public void Save(DatabaseModel data)
+        public List<Term> LoadTerms()
         {
-            var json = JsonSerializer.Serialize(data, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            if (!File.Exists(termsFilePath))
+                return new List<Term>();
 
-            File.WriteAllText(filePath, json);
+            var json = File.ReadAllText(termsFilePath);
+            return JsonSerializer.Deserialize<List<Term>>(json) ?? new List<Term>();
         }
 
-        // Завантаження
-        public DatabaseModel Load()
+        public List<Category> LoadCategories()
         {
-            if (!File.Exists(filePath))
-                return new DatabaseModel();
+            if (!File.Exists(categoriesFilePath))
+                return new List<Category>();
 
-            var json = File.ReadAllText(filePath);
-
-            return JsonSerializer.Deserialize<DatabaseModel>(json)
-                   ?? new DatabaseModel();
+            var json = File.ReadAllText(categoriesFilePath);
+            return JsonSerializer.Deserialize<List<Category>>(json) ?? new List<Category>();
         }
     }
 }

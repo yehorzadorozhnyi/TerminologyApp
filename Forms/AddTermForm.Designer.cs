@@ -38,6 +38,9 @@
             label3 = new Label();
             label4 = new Label();
             cmbCategory = new ComboBox();
+            label5 = new Label();
+            BtnCategoryDelete = new Button();
+            BtnCategoryEdit = new Button();
             SuspendLayout();
             // 
             // txtTerm
@@ -124,17 +127,62 @@
             // 
             // cmbCategory
             // 
+            cmbCategory.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             cmbCategory.FormattingEnabled = true;
-            cmbCategory.Location = new Point(694, 43);
+            cmbCategory.Location = new Point(676, 56);
             cmbCategory.Name = "cmbCategory";
-            cmbCategory.Size = new Size(121, 23);
+            cmbCategory.Size = new Size(154, 23);
             cmbCategory.TabIndex = 8;
+            cmbCategory.Text = "НАПИШІТЬ КАТЕГОРІЮ";
+            cmbCategory.Enter += cmbCategory_Enter;
+            cmbCategory.Leave += cmbCategory_Leave;
+            // 
+            // label5
+            // 
+            label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label5.AutoSize = true;
+            label5.Font = new Font("Trebuchet MS", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label5.ForeColor = Color.RoyalBlue;
+            label5.Location = new Point(705, 12);
+            label5.Name = "label5";
+            label5.Size = new Size(99, 24);
+            label5.TabIndex = 9;
+            label5.Text = "КАТЕГОРІЇ";
+            // 
+            // BtnCategoryDelete
+            // 
+            BtnCategoryDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BtnCategoryDelete.BackColor = Color.RoyalBlue;
+            BtnCategoryDelete.ForeColor = SystemColors.Control;
+            BtnCategoryDelete.Location = new Point(676, 96);
+            BtnCategoryDelete.Name = "BtnCategoryDelete";
+            BtnCategoryDelete.Size = new Size(154, 23);
+            BtnCategoryDelete.TabIndex = 10;
+            BtnCategoryDelete.Text = "Видалити категорію";
+            BtnCategoryDelete.UseVisualStyleBackColor = false;
+            BtnCategoryDelete.Click += BtnCategoryDelete_Click;
+            // 
+            // BtnCategoryEdit
+            // 
+            BtnCategoryEdit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BtnCategoryEdit.BackColor = Color.RoyalBlue;
+            BtnCategoryEdit.ForeColor = SystemColors.Control;
+            BtnCategoryEdit.Location = new Point(676, 139);
+            BtnCategoryEdit.Name = "BtnCategoryEdit";
+            BtnCategoryEdit.Size = new Size(154, 23);
+            BtnCategoryEdit.TabIndex = 11;
+            BtnCategoryEdit.Text = "Редагувати категорію";
+            BtnCategoryEdit.UseVisualStyleBackColor = false;
+            BtnCategoryEdit.Click += BtnCategoryEdit_Click;
             // 
             // AddTermForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(833, 450);
+            Controls.Add(BtnCategoryEdit);
+            Controls.Add(BtnCategoryDelete);
+            Controls.Add(label5);
             Controls.Add(cmbCategory);
             Controls.Add(label4);
             Controls.Add(label3);
@@ -163,5 +211,8 @@
         private Label label3;
         private Label label4;
         private ComboBox cmbCategory;
+        private Label label5;
+        private Button BtnCategoryDelete;
+        private Button BtnCategoryEdit;
     }
 }

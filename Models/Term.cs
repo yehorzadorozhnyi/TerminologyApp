@@ -11,6 +11,7 @@ namespace TerminologyApp.Models
         public string Definition { get; set; }
         public List<string> References { get; set; }
         public string Category { get; set; }
+        public string DisplayName => Name?.Replace("_", " ");
 
         public Term()
         {

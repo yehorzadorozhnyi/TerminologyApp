@@ -10,27 +10,29 @@ namespace TerminologyApp.Data
         // База термінів
         public List<Term> Terms = new List<Term>();
 
-        // Друга база — категорії
+        // База категорій
         public List<Category> Categories = new List<Category>();
+
+
 
         // Додавання терміна
         public void AddTerm(Term term)
         {
             Terms.Add(term);
 
-            // Пошук категорії
             var category = Categories
-                .FirstOrDefault(c => c.Name == term.Category);
+                .FirstOrDefault(c => c.Name.Equals(term.Category, System.StringComparison.OrdinalIgnoreCase));
 
-            // Якщо категорії нема — створити
             if (category == null)
             {
                 category = new Category(term.Category, new List<string>());
                 Categories.Add(category);
             }
 
-            // Додати термін до категорії
-            category.Terms.Add(term.Name);
+            if (!category.Terms.Contains(term.Name))
+            {
+                category.Terms.Add(term.Name);
+            }
         }
 
         // Пошук терміна
@@ -43,20 +45,43 @@ namespace TerminologyApp.Data
         public void DeleteTerm(string name)
         {
             var term = Find(name);
+            if (term == null) return;
 
-            if (term == null)
-                return;
+            string originalTermName = term.Name;
+            string targetCategoryName = term.Category;
 
             Terms.Remove(term);
 
-            // Видалення з категорії
-            var category = Categories
-                .FirstOrDefault(c => c.Name == term.Category);
+            var category = Categories.FirstOrDefault(c =>
+                c.Name.Equals(targetCategoryName, StringComparison.OrdinalIgnoreCase)
+            );
 
             if (category != null)
             {
-                category.Terms.Remove(term.Name);
+                category.Terms.Remove(originalTermName);
+                category.Terms.Remove(originalTermName.Replace("_", " "));
             }
+
+            foreach (var cat in Categories)
+            {
+                cat.Terms.Remove(originalTermName);
+                cat.Terms.Remove(originalTermName.Replace("_", " "));
+            }
+
+            // ОЧИЩЕННЯ ПОВ'ЯЗАНИХ ПОСИЛАНЬ В ІНШИХ ТЕРМІНАХ
+            foreach (var t in Terms)
+            {
+                if (t.References != null)
+                {
+                    t.References.RemoveAll(r =>
+                        r.Equals(originalTermName, StringComparison.OrdinalIgnoreCase) ||
+                        r.Replace("_", " ").Equals(originalTermName.Replace("_", " "), StringComparison.OrdinalIgnoreCase)
+                    );
+                }
+            }
+
+            var storage = new JsonStorage();
+            storage.SaveAll(Terms, Categories);
         }
 
         // Редагування
@@ -66,18 +91,19 @@ namespace TerminologyApp.Data
             AddTerm(updatedTerm);
         }
 
-        // Отримання термінів категорії
+        // Отримання термінів за категорією
         public List<Term> GetTermsByCategory(string categoryName)
         {
             return Terms
                 .Where(t => t.Category == categoryName)
                 .ToList();
         }
-
-        // Оновлення списку термінів
+        // Отримання всіх категорій
         public List<string> GetAllTermNames()
         {
-            return Terms.Select(t => t.Name).ToList();
+            return Terms
+                .Select(t => t.Name.Replace("_", " "))
+                .ToList();
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using TerminologyApp.Models;
@@ -9,18 +10,18 @@ namespace TerminologyApp
     public partial class TerminologyApp : Form
     {
         private readonly TerminologyBase db = new TerminologyBase();
-        private readonly JsonStorage storage = new JsonStorage("terms.json");
+        private readonly JsonStorage storage = new JsonStorage();
 
         public TerminologyApp()
         {
             InitializeComponent();
 
+            db.Terms = storage.LoadTerms() ?? new();
+            db.Categories = storage.LoadCategories() ?? new();
 
-            var data = storage.Load();
 
-            db.Terms = data.Terms ?? new();
-            db.Categories = data.Categories ?? new();
 
+            txtSearch.Text = "Знайти термін...";
             RefreshTermsList();
         }
 
@@ -31,115 +32,190 @@ namespace TerminologyApp
         private void RefreshTermsList()
         {
             lstTerms.Items.Clear();
-            lstTerms.Items.AddRange(db.GetAllTermNames().ToArray());
+
+            foreach (var category in db.Categories)
+            {
+                lstTerms.Items.Add($"[{category.Name.ToUpper()}]");
+
+                var categoryTerms = db.GetTermsByCategory(category.Name);
+
+                foreach (var term in categoryTerms)
+                {
+                    lstTerms.Items.Add($"\t{term.DisplayName}");
+                }
+            }
         }
 
         // =========================
         // ПОДІЇ НА КНОПКИ
         // =========================
-        // ДОДАТИ ТЕРМІН
+
         private void btnAddTerm_Click(object sender, EventArgs e)
         {
             AddTermForm form = new AddTermForm();
             form.LoadCategories(db.Categories);
 
-            if (form.ShowDialog() == DialogResult.OK)
+            var result = form.ShowDialog();
+
+            if (result == DialogResult.OK)
             {
                 db.AddTerm(form.NewTerm);
+                RefreshTermsList();
+                Save();
+            }
+            else if (result == DialogResult.Yes)
+            {
+                string categoryToDelete = form.NewTerm.Name;
 
+                var termsInCategory = db.GetTermsByCategory(categoryToDelete);
+                foreach (var term in termsInCategory)
+                {
+                    db.DeleteTerm(term.Name);
+                }
+
+                var categoryObj = db.Categories.FirstOrDefault(c => c.Name.Equals(categoryToDelete, StringComparison.OrdinalIgnoreCase));
+                if (categoryObj != null)
+                {
+                    db.Categories.Remove(categoryObj);
+                }
+
+                txtOutput.Clear();
                 RefreshTermsList();
                 Save();
             }
         }
-        // ОЧИСТИТИ ВИХІД
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
         }
-        // ВИДАЛЕННЯ ТЕРМІНА
+
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (lstTerms.SelectedItem is not string name)
-                return;
-
-            db.DeleteTerm(name);
-
-            lstTerms.Items.Remove(name);
-
-            storage.Save(new DatabaseModel
+            if (lstTerms.SelectedItem is not string selectedItem || !selectedItem.StartsWith("\t"))
             {
-                Terms = db.Terms,
-                Categories = db.Categories
-            });
+                MessageBox.Show("Будь ласка, виберіть конкретний термін для видалення!", "Увага");
+                return;
+            }
+
+            string cleanedTermName = selectedItem.Replace("\t", "").Trim().Replace(" ", "_");
+            var selectedTerm = db.Find(cleanedTermName);
+
+            if (selectedTerm == null) return;
+
+            var confirmResult = MessageBox.Show(
+                $"Ви впевнені, що хочете видалити термін '{selectedTerm.DisplayName}'?",
+                "Підтвердження видалення",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirmResult == DialogResult.Yes)
+            {
+                db.DeleteTerm(selectedTerm.Name);
+                txtOutput.Clear(); 
+                RefreshTermsList();
+                Save();
+            }
         }
-        // РЕДАГУВАННЯ ТЕРМІНА
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (lstTerms.SelectedItem is not string oldName)
-                return;
-
-            var term = db.Find(oldName);
-
-            if (term == null)
-                return;
-
-            AddTermForm form = new AddTermForm(term);
-
-            if (form.ShowDialog() == DialogResult.OK)
+            if (lstTerms.SelectedItem is not string selectedItem || !selectedItem.StartsWith("\t"))
             {
-                db.UpdateTerm(oldName, form.NewTerm);
+                MessageBox.Show("Будь ласка, виберіть конкретний термін для редагування! (Якщо бажаєте видалити категорії, перейдіть у вікно додавання терміну, оберіть відповідну категорію натисність кнопку ВИДАЛИТИ КАТЕГОРІЮ)", "Увага", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
+            string cleanedTermName = selectedItem.Replace("\t", "").Trim().Replace(" ", "_");
+            var selectedTerm = db.Find(cleanedTermName);
+
+            if (selectedTerm == null)
+            {
+                MessageBox.Show("Термін не знайдено в базі даних!", "Помилка");
+                return;
+            }
+
+            AddTermForm form = new AddTermForm(selectedTerm);
+            form.LoadCategories(db.Categories);
+
+            var result = form.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                db.UpdateTerm(selectedTerm.Name, form.NewTerm);
                 RefreshTermsList();
+                Save();
+            }
+            else if (result == DialogResult.Yes)
+            {
+                string categoryToDelete = form.NewTerm.Name;
 
-                storage.Save(new DatabaseModel
+                var termsInCategory = db.GetTermsByCategory(categoryToDelete);
+                foreach (var term in termsInCategory)
                 {
-                    Terms = db.Terms,
-                    Categories = db.Categories
-                });
+                    db.DeleteTerm(term.Name);
+                }
+
+                var categoryObj = db.Categories.FirstOrDefault(c => c.Name.Equals(categoryToDelete, StringComparison.OrdinalIgnoreCase));
+                if (categoryObj != null)
+                {
+                    db.Categories.Remove(categoryObj);
+                }
+
+                txtOutput.Clear(); // Очищаємо екран
+                RefreshTermsList();
+                Save();
             }
         }
-        // ПОКАЗАТИ ВСІ ТЕРМІНИ
 
         private void btnShowAll_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
-
             foreach (var t in db.Terms)
             {
-                txtOutput.AppendText($"{t.Name} - {t.Definition}\n");
-                txtOutput.AppendText("Посилання: ");
-
-                foreach (var r in t.References)
-                {
-                    txtOutput.AppendText($"http://term/{r.Replace(" ", "_")} ");
-                }
-
-                txtOutput.AppendText("\n\n");
+                PrintTermDetails(t);
+                txtOutput.AppendText("---------------------------\n");
             }
         }
 
-        // ЛАНЦЮГ ПОСИЛАНЬ
+        // =========================
+        // ЛАНЦЮГ
+        // =========================
+
         private void btnShowChain_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
 
-            if (lstTerms.SelectedItem is not string selected)
+            if (lstTerms.SelectedItem == null)
                 return;
 
-            ShowChain(selected);
+            string selectedText = lstTerms.SelectedItem.ToString().Trim();
+
+            var selectedTerm = db.Terms.FirstOrDefault(t =>
+                t.Name.Replace("_", " ").Equals(selectedText, StringComparison.OrdinalIgnoreCase)
+            );
+            if (selectedTerm == null)
+                return;
+
+            ShowChain(selectedTerm.Name);
         }
 
-        private void ShowChain(string name)
+        private void ShowChain(string name, HashSet<string> visited = null)
         {
-            var term = db.Find(name);
+            if (visited == null)
+                visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            if (visited.Contains(name)) return;
+            visited.Add(name);
+
+            var term = db.Terms.FirstOrDefault(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (term == null) return;
 
-            txtOutput.AppendText($"{term.Name} -> ");
+            txtOutput.AppendText($"{term.DisplayName} -> ");
 
             foreach (var r in term.References)
             {
-                ShowChain(r);
+                ShowChain(r, visited);
             }
         }
 
@@ -149,22 +225,41 @@ namespace TerminologyApp
 
         private void lstTerms_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstTerms.SelectedItem is not string name)
+            if (lstTerms.SelectedItem is not string selectedItem)
+            {
+                txtOutput.Clear();
                 return;
+            }
 
-            var term = db.Find(name);
-            if (term == null) return;
+            if (!selectedItem.StartsWith("\t"))
+            {
+                txtOutput.Clear(); 
+                txtOutput.AppendText("Вибрано категорію. Оберіть термін нижче для перегляду деталей.");
+                return;
+            }
+
+            string cleanedTermName = selectedItem.Replace("\t", "").Trim().Replace(" ", "_");
+            var selectedTerm = db.Find(cleanedTermName);
 
             txtOutput.Clear();
 
-            txtOutput.AppendText($"Термін: {term.Name}\n\n");
+            if (selectedTerm != null)
+            {
+                PrintTermDetails(selectedTerm);
+            }
+        }
+
+        private void PrintTermDetails(Term term)
+        {
+            txtOutput.AppendText($"Термін: {term.DisplayName}\n\n");
             txtOutput.AppendText($"Визначення: {term.Definition}\n\n");
             txtOutput.AppendText($"Категорія: {term.Category}\n\n");
             txtOutput.AppendText("Посилання:\n");
 
             foreach (var r in term.References)
             {
-                txtOutput.AppendText($"http://term/{r.Replace(" ", "_")} ");
+                string beautifulLink = r.Replace(" ", "-");
+                txtOutput.AppendText($"http://term/{beautifulLink}\n");
             }
         }
 
@@ -174,19 +269,37 @@ namespace TerminologyApp
 
         private void txtOutput_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            string clicked = e.LinkText;
+            if (string.IsNullOrWhiteSpace(e.LinkText)) return;
 
-            if (string.IsNullOrWhiteSpace(clicked))
-                return;
+            string rawName = e.LinkText.Replace("http://term/", "");
 
-            string termName = clicked.Replace("http://term/", "").Replace("_", " ");
+            string targetName = rawName.Replace("_", " ").Trim();
 
-            var term = db.Find(termName);
+            var foundTerm = db.Terms.FirstOrDefault(t =>
+                t.Name.Replace("_", " ").Equals(targetName, StringComparison.OrdinalIgnoreCase)
+            );
 
-            if (term == null)
-                return;
+            if (foundTerm == null) return;
 
-            lstTerms.SelectedItem = term.Name;
+            txtSearch.Text = string.Empty;
+            RefreshTermsList();
+
+            int targetIndex = -1;
+            for (int i = 0; i < lstTerms.Items.Count; i++)
+            {
+                string itemText = lstTerms.Items[i].ToString().Trim();
+
+                if (itemText.Equals(targetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    targetIndex = i;
+                    break;
+                }
+            }
+
+            if (targetIndex != -1)
+            {
+                lstTerms.SelectedIndex = targetIndex;
+            }
         }
 
         // =========================
@@ -195,62 +308,94 @@ namespace TerminologyApp
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            string search = txtSearch.Text.ToLower();
-
+            string search = txtSearch.Text.ToLower().Trim();
             lstTerms.Items.Clear();
 
-            var filtered = db.Terms.Where(t =>
-                (!string.IsNullOrEmpty(t.Name) && t.Name.ToLower().Contains(search)) ||
-                (!string.IsNullOrEmpty(t.Category) && t.Category.ToLower().Contains(search))
-            );
+            if (search == "знайти термін..." || string.IsNullOrWhiteSpace(search))
+            {
+                RefreshTermsList();
+                return;
+            }
 
-            lstTerms.Items.AddRange(filtered.Select(t => t.Name).ToArray());
+            var filteredTerms = db.Terms.Where(t =>
+                (!string.IsNullOrEmpty(t.DisplayName) && t.DisplayName.ToLower().Contains(search)) ||
+                (!string.IsNullOrEmpty(t.Category) && t.Category.ToLower().Contains(search)) ||
+                (!string.IsNullOrEmpty(t.Definition) && t.Definition.ToLower().Contains(search))
+            ).ToList();
+
+            foreach (var category in db.Categories)
+            {
+                var categoryTerms = filteredTerms
+                    .Where(t => t.Category.Equals(category.Name, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (categoryTerms.Any())
+                {
+                    lstTerms.Items.Add($"[{category.Name.ToUpper()}]");
+                    foreach (var term in categoryTerms)
+                    {
+                        lstTerms.Items.Add($"\t{term.DisplayName}");
+                    }
+                }
+            }
         }
 
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == "Знайти термін...")
+            {
+                txtSearch.Text = string.Empty;
+            }
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = "Знайти термін...";
+            }
+        }
+
+
+
+
         // =========================
-        // КАТЕГОРІЇ
+        // КАТЕГОРІЇ ТА ЗБЕРЕЖЕННЯ
         // =========================
 
         private void btnShowCategories_Click(object sender, EventArgs e)
         {
             txtOutput.Clear();
+            txtOutput.DetectUrls = true;
 
             foreach (var c in db.Categories)
             {
                 txtOutput.AppendText($"Категорія: {c.Name}\n");
-
                 foreach (var term in c.Terms)
                 {
-                    txtOutput.AppendText($" - {term}\n");
-                }
+                    string formattedLink = term.Replace(" ", "_");
 
+                    txtOutput.AppendText(" - ");
+                    txtOutput.AppendText($"http://term/{formattedLink}");
+                    txtOutput.AppendText("\n");
+                }
                 txtOutput.AppendText("\n");
             }
         }
 
-        // =========================
-        // ЗБЕРЕЖЕННЯ ДОПОМІЖНЕ
-        // =========================
+        // Метод для збереження даних
 
         private void Save()
         {
-            storage.Save(new DatabaseModel
-            {
-                Terms = db.Terms,
-                Categories = db.Categories
-            });
+            storage.SaveAll(db.Terms, db.Categories);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            storage.Save(new DatabaseModel
-            {
-                Terms = db.Terms,
-                Categories = db.Categories
-            });
-
+            Save();
             base.OnFormClosing(e);
         }
 
+        
     }
 }

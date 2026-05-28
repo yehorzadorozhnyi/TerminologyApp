@@ -24,16 +24,26 @@ namespace TerminologyApp
         public AddTermForm(Term term)
         {
             InitializeComponent();
+            txtTerm.Text = term.Name.Replace("_", " ");
 
-            txtTerm.Text = term.Name;
             cmbCategory.Text = term.Category;
             txtDefinition.Text = term.Definition;
-            txtReferences.Text = string.Join(", ", term.References);
+
+            if (term.References != null)
+            {
+                txtReferences.Text = string.Join(", ", term.References.Select(r => r.Replace("_", " ")));
+            }
         }
 
         // Збереження нового або відредагованого терміна
         private void btnSave_Click_1(object sender, EventArgs e)
         {
+            string categoryName = cmbCategory.Text.Trim();
+            if (string.IsNullOrWhiteSpace(categoryName) || categoryName.Equals("НАПИШІТЬ КАТЕГОРІЮ", StringComparison.OrdinalIgnoreCase))
+            {
+                categoryName = "Без категорії";
+            }
+
             if (string.IsNullOrWhiteSpace(txtTerm.Text))
             {
                 MessageBox.Show(
@@ -42,7 +52,6 @@ namespace TerminologyApp
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
-
                 txtTerm.Focus();
                 return;
             }
@@ -55,22 +64,21 @@ namespace TerminologyApp
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
-
                 txtDefinition.Focus();
                 return;
             }
 
             var refs = txtReferences.Text
                 .Split(',')
-                .Select(r => r.Trim())
+                .Select(r => r.Trim().Replace(" ", "_"))
                 .Where(r => !string.IsNullOrWhiteSpace(r))
                 .ToList();
 
             NewTerm = new Term(
-                txtTerm.Text,
-                txtDefinition.Text,
+                txtTerm.Text.Trim().Replace(" ", "_"),
+                txtDefinition.Text.Trim(),
                 refs,
-                cmbCategory.Text
+                categoryName
             );
 
             DialogResult = DialogResult.OK;
@@ -87,10 +95,76 @@ namespace TerminologyApp
             }
         }
 
-
         private void label1_Click(object sender, EventArgs e)
         {
 
         }
+
+        private void cmbCategory_Enter(object sender, EventArgs e)
+        {
+            if (cmbCategory.Text == "НАПИШІТЬ КАТЕГОРІЮ")
+            {
+                cmbCategory.Text = string.Empty;
+            }
+        }
+
+        private void cmbCategory_Leave(object sender, EventArgs e)
+        {
+
+            if (string.IsNullOrWhiteSpace(cmbCategory.Text))
+            {
+                cmbCategory.Text = "Без категорії";
+            }
+        }
+
+        private void BtnCategoryDelete_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(cmbCategory.Text))
+            {
+                MessageBox.Show("Спочатку виберіть категорію для видалення!", "Увага", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string categoryName = cmbCategory.Text;
+
+            var dialogResult = MessageBox.Show(
+                $"Ви впевнені, що хочете видалити категорію '{categoryName}' та ВСІ терміни, які до неї належать?",
+                "Підтвердження повного видалення",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (dialogResult != DialogResult.Yes)
+                return;
+
+            NewTerm = new Term { Name = categoryName };
+
+            DialogResult = DialogResult.Yes;
+            Close();
+        }
+
+        private void BtnCategoryEdit_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(cmbCategory.Text))
+            {
+                MessageBox.Show("Спочатку виберіть категорію для редагування!", "Увага", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string oldCategoryName = cmbCategory.Text;
+            string newCategoryName = Microsoft.VisualBasic.Interaction.InputBox(
+                "Введіть нову назву для категорії:",
+                "Редагування категорії",
+                oldCategoryName
+            ).Trim();
+
+            if (string.IsNullOrWhiteSpace(newCategoryName) || newCategoryName == oldCategoryName)
+                return;
+
+            NewTerm = new Term { Name = newCategoryName, Category = oldCategoryName };
+            DialogResult = DialogResult.No;
+            Close();
+        }
     }
 }
+    
